@@ -53,12 +53,14 @@ runs:
         let token = '${{inputs.deepseek-token}}'
         let sysPrompt = '${{inputs.sys-prompt}}'
         let userPrompt = '${{inputs.user-prompt}}'
+        let ghToken = '${{ github.token }}'
         let repo = '${{ github.repository }}'
         let pr = '${{ github.event.pull_request.number }}'
         (deepseek-review $token
           --model $model
           --repo $repo
           --pr-number $pr
+          --gh-token $ghToken
           --base-url $baseUrl
           --sys-prompt $sysPrompt
           --user-prompt $userPrompt
