@@ -3,71 +3,27 @@
 # REF:
 #   - https://github.com/marketplace/actions/checkout
 
-name: Setup-Moonbit@Dev
+name: Code Review@Dev
 on:
+  pull_request_target:
+    types: [opened]
   push:
     branches:
-      - develop
-
-    paths-ignore:
-      - '**.md'
+      - main
 
 jobs:
-  setup-moonbit:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    name: Setup MoonBit@${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Moonbit
-        uses: hustcer/setup-moonbit@develop
-
-      - name: Check Moonbit Version
-        run: |
-          moon version --all
-
-  setup-moonbit-of-version:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    name: Setup MoonBit with Version@${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Moonbit with Version
-        uses: hustcer/setup-moonbit@develop
-        with:
-          setup-core: false
-          version: 0.1.20250108+7a6b9ab0e
-
-      - name: Check Moonbit Version
-        run: |
-          moon version --all
-
-  setup-moonbit-bleeding:
+  setup-deepseek-review:
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest]
     runs-on: ${{ matrix.os }}
-    name: Setup MoonBit Bleeding@${{ matrix.os }}
+    name: Deepseek Code Review@${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Moonbit Bleeding
-        uses: hustcer/setup-moonbit@develop
+      - name: Setup Deepseek Code Review
+        uses: hustcer/deepseek-review@main
         with:
-          version: bleeding
-
-      - name: Check Moonbit Version
-        run: |
-          moon version --all
+          deepseek-token: ${{ secrets.DEEPSEEK_TOKEN }}

@@ -15,14 +15,25 @@ branding:
   color: 'purple'
 
 inputs:
-  version:
+  deepseek-token:
+    required: true
+    description: 'Your deepseek API token.'
+  model:
     required: false
-    default: 'latest'
-    description: 'The moonbit toolchain version to setup.'
-  setup-core:
+    default: 'deepseek-chat'
+    description: 'The deepseek model to choose for code review.'
+  base-url:
     required: false
-    default: true
-    description: 'Set to `true` if you want to setup moonbit core.'
+    default: 'https://api.deepseek.com'
+    description: 'The base url of deepseek API.'
+  sys-prompt:
+    required: false
+    default: '你是一个专业的代码审查助手，负责分析GitHub Pull Request的代码变更，指出潜在的问题，如代码风格、逻辑错误、安全漏洞，并提供改进建议。请用简洁明了的语言列出问题及建议。'
+    description: 'The system prompt for deepseek API.'
+  user-prompt:
+    required: false
+    default: '请分析以下代码变更：'
+    description: 'The user prompt for deepseek API.'
 
 runs:
   using: 'composite'
@@ -36,7 +47,17 @@ runs:
       shell: nu {0}
       run: |
         use ${{ github.action_path }}/nu/review.nu *
-        let version = '${{inputs.version}}'
-        let setupCore = '${{inputs.setup-core}}' | into bool
-        deepseek-review $version --setup-core=$setupCore
+        let model = '${{inputs.model}}'
+        let baseUrl = '${{inputs.base-url}}'
+        let token = '${{inputs.deepseek-token}}'
+        let sysPrompt = '${{inputs.sys-prompt}}'
+        let ghToken = '${{secrets.GITHUB_TOKEN}}'
+        let userPrompt = '${{inputs.user-prompt}}'
+        (deepseek-review $token
+          --model $model
+          --base-url $baseUrl
+          --gh-token $ghToken
+          --sys-prompt $sysPrompt
+          --user-prompt $userPrompt
+        )
 

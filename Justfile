@@ -1,7 +1,7 @@
 # Author: hustcer
-# Create: 2023/10/29 18:05:20
+# Create: 2025/01/29 13:05:20
 # Description:
-#   Some helper task for setup-moonbit
+#   Some helper task for deepseek-review
 # Ref:
 #   1. https://github.com/casey/just
 #   2. https://www.nushell.sh/book/
@@ -21,7 +21,7 @@ set dotenv-load := true
 set positional-arguments := true
 
 # Just commands aliases
-alias f := fetch
+alias cr := code-review
 
 # Use `just --evaluate` to show env vars
 
@@ -42,6 +42,11 @@ default:
 release *OPTIONS:
   @overlay use {{ join(DEEPSEEK_REIVEW_PATH, 'nu', 'release.nu') }}; \
     make-release {{OPTIONS}}
+
+# Code review for GitHub PRs or local changes
+code-review *OPTIONS:
+  @overlay use {{ join(DEEPSEEK_REIVEW_PATH, 'nu', 'review.nu') }}; \
+    deepseek-review {{OPTIONS}}
 
 # Plugins need to be registered only once after nu v0.61
 _setup:

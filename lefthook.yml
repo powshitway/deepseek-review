@@ -11,7 +11,7 @@
 #       tags: backend security
 #       run: bundle audit
 #
-min_version: 1.8.0
+min_version: 1.10.0
 no_tty: false
 skip_output:
   - meta              # Skips lefthook version printing

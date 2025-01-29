@@ -8,7 +8,21 @@
 # Usage:
 #
 
-export def deepseek-review [] {
+const DEFAULT_OPTIONS = {
+  MODEL: 'deepseek-chat',
+  BASE_URL: 'https://api.deepseek.com',
+  USER_PROMPT: '请分析以下代码变更：',
+  SYS_PROMPT: '你是一个专业的代码审查助手，负责分析GitHub Pull Request的代码变更，指出潜在的问题，如代码风格、逻辑错误、安全漏洞，并提供改进建议。请用简洁明了的语言列出问题及建议。',
+}
+
+export def deepseek-review [
+  token: string,      # Your Deepseek API token
+  --gh-token: string, # Your Github token, GITHUB_TOKEN by default
+  --model: string = $DEFAULT_OPTIONS.MODEL,   # Model name, deepseek-chat by default
+  --base-url: string = $DEFAULT_OPTIONS.BASE_URL,
+  --sys-prompt: string = $DEFAULT_OPTIONS.SYS_PROMPT,
+  --user-prompt: string = $DEFAULT_OPTIONS.USER_PROMPT,
+] {
 
 }
 
