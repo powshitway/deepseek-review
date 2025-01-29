@@ -32,7 +32,7 @@ inputs:
     description: 'The system prompt for deepseek API.'
   user-prompt:
     required: false
-    default: '请分析以下代码变更：'
+    default: '请分析以下代码变更'
     description: 'The user prompt for deepseek API.'
 
 runs:
@@ -46,17 +46,22 @@ runs:
     - name: Deepseek Code Review
       shell: nu {0}
       run: |
-        use ${{ github.action_path }}/nu/review.nu *
+        const NU_LIB_DIRS = [ ${{ github.action_path }}/nu ]
+        use review.nu *
         let model = '${{inputs.model}}'
         let baseUrl = '${{inputs.base-url}}'
         let token = '${{inputs.deepseek-token}}'
         let sysPrompt = '${{inputs.sys-prompt}}'
         let ghToken = '${{secrets.GITHUB_TOKEN}}'
         let userPrompt = '${{inputs.user-prompt}}'
+        let repo = '${{ github.repository }}'
+        let pr = '${{ github.event.pull_request.number }}'
         (deepseek-review $token
           --model $model
-          --base-url $baseUrl
+          --repo $repo
+          --pr-number $pr
           --gh-token $ghToken
+          --base-url $baseUrl
           --sys-prompt $sysPrompt
           --user-prompt $userPrompt
         )

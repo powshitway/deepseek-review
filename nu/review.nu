@@ -5,6 +5,9 @@
 #   [√] Deepseek code reivew for Github PRs
 #   [√] Deepseek code reivew for local commit changes
 # Description: A script to do code review by deepseek
+# Env vars:
+#  GITHUB_TOKEN: Your Github API token
+#  DEEPSEEK_TOKEN: Your Deepseek API token
 # Usage:
 #
 
@@ -16,7 +19,10 @@ const DEFAULT_OPTIONS = {
 }
 
 export def deepseek-review [
-  token: string,      # Your Deepseek API token
+  token?: string,     # Your Deepseek API token, fallback to DEEPSEEK_TOKEN
+  --diff: string,     # Diff content, e.g. `git diff` output
+  --repo: string,     # Github repository name, e.g. hustcer/deepseek-review
+  --pr-number: int,   # Github PR number
   --gh-token: string, # Your Github token, GITHUB_TOKEN by default
   --model: string = $DEFAULT_OPTIONS.MODEL,   # Model name, deepseek-chat by default
   --base-url: string = $DEFAULT_OPTIONS.BASE_URL,
@@ -24,6 +30,34 @@ export def deepseek-review [
   --user-prompt: string = $DEFAULT_OPTIONS.USER_PROMPT,
 ] {
 
+  let token = $token | default $env.DEEPSEEK_TOKEN?
+  if ($token | is-empty) {
+    print 'Please provide your Deepseek API token by setting DEEPSEEK_TOKEN or passing it as an argument.'
+    return
+  }
+  $env.GITHUB_TOKEN = $gh_token | default $env.GITHUB_TOKEN?
+  let diff_content = if ($diff | is-empty) {
+      gh pr diff $pr_number --repo $repo | str trim
+    } else { $diff }
+  let payload = {
+    model: $model,
+    stream: 'false',
+    messages: [
+      { role: 'system', content: $sys_prompt },
+      { role: 'user', content: $"($user_prompt):\n($diff_content)" }
+    ]
+  }
+  print $'🚀 Start code review for PR #($pr_number) in ($repo) by Deepseek AI ...'; hr-line
+  let header = [Authorization $'Bearer ($token)']
+  let url = $'($base_url)/chat/completions'
+  let response = http post -H $header -t application/json $url $payload
+  let review = $response | get choices.0.message.content
+  if ($response | get status) != 200 {
+    print $'❌ Code review failed！Error: ($response | get content)'
+    return
+  }
+  gh pr comment $pr_number --body $review --repo $repo
+  print $'✅ Code review finished！PR #($pr_number) review result was posted as a comment.'
 }
 
 # If current host is Windows
