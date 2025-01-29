@@ -76,6 +76,7 @@ export def deepseek-review [
   let response = http post -e -H $header -t application/json $url $payload
   if ($response | is-empty) {
     print $'(ansi r)Oops, No response returned from Deepseek API.(ansi reset)'
+    exit 1
     return
   }
   if $debug {
@@ -84,6 +85,7 @@ export def deepseek-review [
   }
   if ($response | describe) == 'string' {
     print $'❌ Code review failed！Error: '; hr-line; print $response
+    exit 1
     return
   }
   let review = $response | get -i choices.0.message.content
