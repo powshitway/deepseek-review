@@ -1,0 +1,10 @@
+# REF:
+#   https://cspell.org/configuration/
+# Usage:
+#   npx cspell --no-progress .
+
+words:
+- justfile
+- lefthook
+
+ignorePaths:

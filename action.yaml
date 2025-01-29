@@ -1,0 +1,42 @@
+# Deepseek Code Review Action
+#   @author: hustcer
+#   @created: 2025/01/29 13:05:20
+# REF:
+#   - https://docs.github.com/cn/actions/creating-actions/about-custom-actions
+#   - https://docs.github.com/cn/actions/creating-actions/metadata-syntax-for-github-actions
+#   - https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
+
+name: 'Deepseek Code Review'
+author: 'hustcer'
+description: 'A github action to do code review by Deepseek for PRs.'
+
+branding:
+  icon: 'code'
+  color: 'purple'
+
+inputs:
+  version:
+    required: false
+    default: 'latest'
+    description: 'The moonbit toolchain version to setup.'
+  setup-core:
+    required: false
+    default: true
+    description: 'Set to `true` if you want to setup moonbit core.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Nu
+      uses: hustcer/setup-nu@v3
+      with:
+        version: 0.101.0
+
+    - name: Deepseek Code Review
+      shell: nu {0}
+      run: |
+        use ${{ github.action_path }}/nu/review.nu *
+        let version = '${{inputs.version}}'
+        let setupCore = '${{inputs.setup-core}}' | into bool
+        deepseek-review $version --setup-core=$setupCore
+
