@@ -56,6 +56,8 @@ export def --env deepseek-review [
   let is_action = ($env.GITHUB_ACTIONS? == 'true')
   let token = $token | default $env.DEEPSEEK_TOKEN?
   let repo = $repo | default $env.DEFAULT_GITHUB_REPO?
+  let header = [Authorization $'Bearer ($token)']
+  let url = $'($base_url)/chat/completions'
   $env.GH_TOKEN = $gh_token | default $env.GITHUB_TOKEN?
   if ($token | is-empty) {
     print $'(ansi r)Please provide your Deepseek API token by setting `DEEPSEEK_TOKEN` or passing it as an argument.(ansi reset)'
@@ -83,8 +85,6 @@ export def --env deepseek-review [
   if $debug {
     print $'Code Changes:'; hr-line; print $diff_content
   }
-  let header = [Authorization $'Bearer ($token)']
-  let url = $'($base_url)/chat/completions'
   print $'(char nl)(ansi g)Waiting for response from Deepseek ...(ansi reset)'
   let response = http post -e -H $header -t application/json $url $payload
   if ($response | is-empty) {
