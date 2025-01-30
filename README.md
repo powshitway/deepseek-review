@@ -12,8 +12,9 @@
 
 ## Local Code Review
 
-More detail to be updated ...
+More details to be updated ...
 
+```console
 Use Deepseek AI to review code changes
 
 Usage:
@@ -35,12 +36,7 @@ Flags:
 Parameters:
   token <string>: Your Deepseek API token, fallback to DEEPSEEK_TOKEN (optional)
 
-Input/output types:
-  ╭───┬───────┬────────╮
-  │ # │ input │ output │
-  ├───┼───────┼────────┤
-  │ 0 │ any   │ any    │
-  ╰───┴───────┴────────╯
+```
 
 ## Code Review with GitHub Action
 

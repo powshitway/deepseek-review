@@ -12,6 +12,7 @@
 
 未完待续 ...
 
+```console
 Use Deepseek AI to review code changes
 
 Usage:
@@ -33,12 +34,7 @@ Flags:
 Parameters:
   token <string>: Your Deepseek API token, fallback to DEEPSEEK_TOKEN (optional)
 
-Input/output types:
-  ╭───┬───────┬────────╮
-  │ # │ input │ output │
-  ├───┼───────┼────────┤
-  │ 0 │ any   │ any    │
-  ╰───┴───────┴────────╯
+```
 
 ## 通过 GitHub Action 进行代码审核
 
