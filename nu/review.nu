@@ -38,20 +38,20 @@ const DEFAULT_OPTIONS = {
   SYS_PROMPT: 'You are a professional code review assistant responsible for analyzing code changes in GitHub Pull Requests. Identify potential issues such as code style violations, logical errors, security vulnerabilities, and provide improvement suggestions. Clearly list the problems and recommendations in a concise manner.',
 }
 
-# Use Deepseek AI to review code changes
+# Use Deepseek AI to review code changes locally or in GitHub Actions
 export def --env deepseek-review [
-  token?: string,           # Your Deepseek API token, fallback to DEEPSEEK_TOKEN
+  token?: string,           # Your Deepseek API token, fallback to DEEPSEEK_TOKEN env var
   --debug(-d),              # Debug mode
   --repo(-r): string,       # GitHub repository name, e.g. hustcer/deepseek-review
   --pr-number(-n): string,  # GitHub PR number
-  --gh-token: string,       # Your GitHub token, GITHUB_TOKEN by default
+  --gh-token: string,       # Your GitHub token, fallback to GITHUB_TOKEN env var
   --diff-to(-t): string,    # Diff to git REF
   --diff-from(-f): string,  # Diff from git REF
   --model(-m): string = $DEFAULT_OPTIONS.MODEL,   # Model name, deepseek-chat by default
   --base-url: string = $DEFAULT_OPTIONS.BASE_URL,
   --sys-prompt(-s): string = $DEFAULT_OPTIONS.SYS_PROMPT,
   --user-prompt(-u): string = $DEFAULT_OPTIONS.USER_PROMPT,
-] {
+]: nothing -> nothing {
   $env.config.table.mode = 'psql'
   let is_action = ($env.GITHUB_ACTIONS? == 'true')
   let token = $token | default $env.DEEPSEEK_TOKEN?
@@ -119,10 +119,10 @@ export def --env deepseek-review [
 
 # Get the diff content from GitHub PR or local git changes
 export def get-diff [
-  --pr-number: string,  # GitHub PR number
   --repo: string,       # GitHub repository name
-  --diff-to: string,       # Diff to git ref
-  --diff-from: string,     # Diff from git ref
+  --pr-number: string,  # GitHub PR number
+  --diff-to: string,    # Diff to git ref
+  --diff-from: string,  # Diff from git ref
 ] {
   let local_repo = $env.DEFAULT_LOCAL_REPO? | default (pwd)
   if not ($local_repo | path exists) {
@@ -152,14 +152,13 @@ export def get-diff [
     } else { git diff }
 
   if ($diff_content | is-empty) {
-    print $'(ansi g)Nothing to review.(ansi reset)'
-    exit $ECODE.SUCCESS
+    print $'(ansi g)Nothing to review.(ansi reset)'; exit $ECODE.SUCCESS
   }
   $diff_content
 }
 
 # Compact the record by removing empty columns
-export def compact-record [] {
+export def compact-record []: record -> record {
   let record = $in
   let empties = $record | columns | filter {|it| $record | get $it | is-empty }
   $record | reject ...$empties
@@ -204,9 +203,9 @@ export def has-ref [
 
 export def hr-line [
   width?: int = 90,
-  --color(-c): string = 'g',
   --blank-line(-b),
   --with-arrow(-a),
+  --color(-c): string = 'g',
 ] {
   # Create a line by repeating the unit with specified times
   def build-line [
