@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-01-31
+
+### Breaking Changes
+
+- Change `DEEPSEEK_TOKEN` to `CHAT_TOKEN` (#50)
+
+### Features
+
+- Add `max-length` input (#52)
+
+### Miscellaneous Tasks
+
+- Update action name, description and icon (#49)
+
 ## [1.1.0] - 2025-01-30
 
 ### Bug Fixes
