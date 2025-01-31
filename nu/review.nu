@@ -92,7 +92,7 @@ export def --env deepseek-review [
     print $'(char nl)(ansi r)The content length ($length) exceeds the maximum limit ($max_length), review skipped.(ansi reset)'
     exit $ECODE.SUCCESS
   }
-  print $'Review content length: (ansi g)($length)(ansi reset)'
+  print $'Review content length: (ansi g)($length)(ansi reset), current max length: (ansi g)($max_length)(ansi reset)'
   let payload = {
     model: $model,
     stream: false,
