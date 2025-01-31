@@ -10,7 +10,7 @@
 # Description: A script to do code review by deepseek
 # Env vars:
 #  GITHUB_TOKEN: Your GitHub API token
-#  DEEPSEEK_TOKEN: Your Deepseek API token
+#  CHAT_TOKEN: Your Deepseek API token
 #  BASE_URL: Deepseek API base URL
 #  SYSTEM_PROMPT: System prompt message
 #  USER_PROMPT: User prompt message
@@ -40,7 +40,7 @@ const DEFAULT_OPTIONS = {
 
 # Use Deepseek AI to review code changes locally or in GitHub Actions
 export def --env deepseek-review [
-  token?: string,           # Your Deepseek API token, fallback to DEEPSEEK_TOKEN env var
+  token?: string,           # Your Deepseek API token, fallback to CHAT_TOKEN env var
   --debug(-d),              # Debug mode
   --repo(-r): string,       # GitHub repository name, e.g. hustcer/deepseek-review
   --pr-number(-n): string,  # GitHub PR number
@@ -54,7 +54,7 @@ export def --env deepseek-review [
 ]: nothing -> nothing {
   $env.config.table.mode = 'psql'
   let is_action = ($env.GITHUB_ACTIONS? == 'true')
-  let token = $token | default $env.DEEPSEEK_TOKEN?
+  let token = $token | default $env.CHAT_TOKEN?
   let repo = $repo | default $env.DEFAULT_GITHUB_REPO?
   let header = [Authorization $'Bearer ($token)']
   let url = $'($base_url)/chat/completions'
@@ -68,12 +68,12 @@ export def --env deepseek-review [
   }
   $env.GH_TOKEN = $gh_token | default $env.GITHUB_TOKEN?
   if ($token | is-empty) {
-    print $'(ansi r)Please provide your Deepseek API token by setting `DEEPSEEK_TOKEN` or passing it as an argument.(ansi reset)'
-    return
+    print $'(ansi r)Please provide your Deepseek API token by setting `CHAT_TOKEN` or passing it as an argument.(ansi reset)'
+    exit $ECODE.INVALID_PARAMETER
   }
   if $is_action and not (is-installed gh) {
     print $'(ansi r)Please install GitHub CLI from https://cli.github.com (ansi reset)'
-    return
+    exit $ECODE.MISSING_BINARY
   }
   let hint = if not $is_action and ($pr_number | is-empty) {
     $'🚀 Initiate the code review by Deepseek AI for local changes ...'
@@ -98,13 +98,11 @@ export def --env deepseek-review [
   if ($response | is-empty) {
     print $'(ansi r)Oops, No response returned from Deepseek API.(ansi reset)'
     exit $ECODE.SERVER_ERROR
-    return
   }
   if $debug { print $'Deepseek Response:'; hr-line; $response | table -e | print }
   if ($response | describe) == 'string' {
     print $'❌ Code review failed！Error: '; hr-line; print $response
     exit $ECODE.SERVER_ERROR
-    return
   }
   let review = $response | get -i choices.0.message.content
   if not $is_action {
