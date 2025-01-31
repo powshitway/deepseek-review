@@ -73,8 +73,8 @@ jobs:
               - Reliability: ["Boundary conditions", "Resource management", "Fallback strategies"]
 
             examples:
-              - issue: "❗Hardcoded credentials in config.py (security violation)"
-              - issue: "⚠️Duplicate validation logic in user_service.py (DRY violation)"
+              - issue: "❗ Hardcoded credentials in config.py (security violation)"
+              - issue: "⚠️ Duplicate validation logic in user_service.py (DRY violation)"
               - change: "Added JWT authentication middleware"
               - change: "Refactored payment processor into standalone module"
 

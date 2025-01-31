@@ -15,8 +15,9 @@
 #  SYSTEM_PROMPT: System prompt message
 #  USER_PROMPT: User prompt message
 # Usage:
-#  1. Local: just cr
-#  2. Local: just cr -f HEAD~1 --debug
+#  1. Local Repo Review: just cr
+#  2. Local Repo Review: just cr -f HEAD~1 --debug
+#  3. Local PR Review: just cr -r hustcer/deepseek-review -n 32
 #
 
 # Commonly used exit codes
