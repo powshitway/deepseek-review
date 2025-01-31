@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2025-01-31
+
+### Documentation
+
+- Update CLI help output (#53)
+- Polish documents (#57)
+
+### Features
+
+- Add `github-token` input (#55)
+- Add `skip cr` or `skip review` to PR title or body to disable code review in GitHub Actions (#56)
+
+### Miscellaneous Tasks
+
+- Increase `max-length` in review workflow (#54)
+
 ## [1.2.0] - 2025-01-31
 
 ### Breaking Changes
