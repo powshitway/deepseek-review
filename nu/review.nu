@@ -2,17 +2,17 @@
 # Author: hustcer
 # Created: 2025/01/29 13:02:15
 # TODO:
-#  [√] Deepseek code review for GitHub PRs
-#  [√] Deepseek code review for local commit changes
+#  [√] DeepSeek code review for GitHub PRs
+#  [√] DeepSeek code review for local commit changes
 #  [√] Debug mode
 #  [√] Output token usage info
 #  [√] Perform CR for changes that either include or exclude specific files
 #  [ ] Add more action outputs
-# Description: A script to do code review by deepseek
+# Description: A script to do code review by DeepSeek
 # Env vars:
 #  GITHUB_TOKEN: Your GitHub API token
-#  CHAT_TOKEN: Your Deepseek API token
-#  BASE_URL: Deepseek API base URL
+#  CHAT_TOKEN: Your DeepSeek API token
+#  BASE_URL: DeepSeek API base URL
 #  SYSTEM_PROMPT: System prompt message
 #  USER_PROMPT: User prompt message
 # Usage:
@@ -24,12 +24,12 @@
 const ECODE = {
   SUCCESS: 0,
   OUTDATED: 1,
-  MISSING_BINARY: 2,
-  MISSING_DEPENDENCY: 3,
-  CONDITION_NOT_SATISFIED: 5,
-  SERVER_ERROR: 6,
-  INVALID_PARAMETER: 7,
-  AUTH_FAILED: 8,
+  AUTH_FAILED: 2,
+  SERVER_ERROR: 3,
+  MISSING_BINARY: 5,
+  INVALID_PARAMETER: 6,
+  MISSING_DEPENDENCY: 7,
+  CONDITION_NOT_SATISFIED: 8,
 }
 
 const DEFAULT_OPTIONS = {
@@ -42,9 +42,9 @@ const DEFAULT_OPTIONS = {
 # If the PR title or body contains any of these keywords, skip the review
 const IGNORE_REVIEW_KEYWORDS = ['skip review' 'skip cr']
 
-# Use Deepseek AI to review code changes locally or in GitHub Actions
+# Use DeepSeek AI to review code changes locally or in GitHub Actions
 export def --env deepseek-review [
-  token?: string,           # Your Deepseek API token, fallback to CHAT_TOKEN env var
+  token?: string,           # Your DeepSeek API token, fallback to CHAT_TOKEN env var
   --debug(-d),              # Debug mode
   --repo(-r): string,       # GitHub repository name, e.g. hustcer/deepseek-review
   --pr-number(-n): string,  # GitHub PR number
@@ -79,7 +79,7 @@ export def --env deepseek-review [
   }
   $env.GH_TOKEN = $gh_token | default $env.GITHUB_TOKEN?
   if ($token | is-empty) {
-    print $'(ansi r)Please provide your Deepseek API token by setting `CHAT_TOKEN` or passing it as an argument.(ansi reset)'
+    print $'(ansi r)Please provide your DeepSeek API token by setting `CHAT_TOKEN` or passing it as an argument.(ansi reset)'
     exit $ECODE.INVALID_PARAMETER
   }
   if $is_action and not (is-installed gh) {
@@ -87,9 +87,9 @@ export def --env deepseek-review [
     exit $ECODE.MISSING_BINARY
   }
   let hint = if not $is_action and ($pr_number | is-empty) {
-    $'🚀 Initiate the code review by Deepseek AI for local changes ...'
+    $'🚀 Initiate the code review by DeepSeek AI for local changes ...'
   } else {
-    $'🚀 Initiate the code review by Deepseek AI for PR (ansi g)#($pr_number)(ansi reset) in (ansi g)($repo)(ansi reset) ...'
+    $'🚀 Initiate the code review by DeepSeek AI for PR (ansi g)#($pr_number)(ansi reset) in (ansi g)($repo)(ansi reset) ...'
   }
   print $hint; print -n (char nl)
   if ($pr_number | is-empty) { $setting | compact-record | reject repo | print }
@@ -114,13 +114,13 @@ export def --env deepseek-review [
     ]
   }
   if $debug { print $'Code Changes:'; hr-line; print $content }
-  print $'(char nl)(ansi g)Waiting for response from Deepseek ...(ansi reset)'
+  print $'(char nl)(ansi g)Waiting for response from DeepSeek ...(ansi reset)'
   let response = http post -e -H $header -t application/json $url $payload
   if ($response | is-empty) {
-    print $'(ansi r)Oops, No response returned from Deepseek API.(ansi reset)'
+    print $'(ansi r)Oops, No response returned from DeepSeek API.(ansi reset)'
     exit $ECODE.SERVER_ERROR
   }
-  if $debug { print $'Deepseek Response:'; hr-line; $response | table -e | print }
+  if $debug { print $'DeepSeek Response:'; hr-line; $response | table -e | print }
   if ($response | describe) == 'string' {
     print $'❌ Code review failed！Error: '; hr-line; print $response
     exit $ECODE.SERVER_ERROR

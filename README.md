@@ -1,14 +1,14 @@
-# Deepseek Code Review
+# DeepSeek Code Review
 
 [中文说明](README.zh-CN.md)
 
 ## Features
 
-- Automate PR Reviews with Deepseek via GitHub Action
+- Automate PR Reviews with DeepSeek via GitHub Action
 - Review Remote GitHub PRs Directly from Your Local CLI
-- Analyze Commit Changes with Deepseek for Any Local Repository with CLI
+- Analyze Commit Changes with DeepSeek for Any Local Repository with CLI
 - Fully Customizable: Choose Models, Base URLs, and Prompts
-- Supports Self-Hosted Deepseek Models for Enhanced Flexibility
+- Supports Self-Hosted DeepSeek Models for Enhanced Flexibility
 - Perform Code Reviews for Changes That either Include or Exclude Specific Files
 - Add `skip cr` or `skip review` to PR title or body to disable code review in GitHub Actions
 - Cross-platform Support: Compatible with GitHub Runners across `macOS`, `Ubuntu`, and `Windows`.
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Code Review
     steps:
-      - name: Deepseek Code Review
+      - name: DeepSeek Code Review
         uses: hustcer/deepseek-review@v1
         with:
           chat-token: ${{ secrets.CHAT_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
 
 </details>
 
-When a PR is created, Deepseek code review will be automatically triggered, and the review results(depend on your prompt) will be posted as comments on the corresponding PR. For example:
+When a PR is created, DeepSeek code review will be automatically triggered, and the review results(depend on your prompt) will be posted as comments on the corresponding PR. For example:
 - [Example 1](https://github.com/hustcer/deepseek-review/pull/30) with [default prompts](https://github.com/hustcer/deepseek-review/blob/main/action.yaml#L35) & [Run Log](https://github.com/hustcer/deepseek-review/actions/runs/13043609677/job/36390331791#step:2:53).
 - [Example 2](https://github.com/hustcer/deepseek-review/pull/68) with [this prompt](https://github.com/hustcer/deepseek-review/blob/eba892d969049caff00b51a31e5c093aeeb536e3/.github/workflows/cr.yml#L32)
 
@@ -87,21 +87,21 @@ jobs:
     # Make sure the code review happens only when the PR has the label 'ai review'
     if: contains(github.event.pull_request.labels.*.name, 'ai review')
     steps:
-      - name: Deepseek Code Review
+      - name: DeepSeek Code Review
         uses: hustcer/deepseek-review@v1
         with:
           chat-token: ${{ secrets.CHAT_TOKEN }}
 ```
 
-With this setup, Deepseek code review will not run automatically upon PR creation. Instead, it will only be triggered when you manually add the `ai review` label.
+With this setup, DeepSeek code review will not run automatically upon PR creation. Instead, it will only be triggered when you manually add the `ai review` label.
 
 ## Input Parameters
 
 | Name           | Type   | Description                                                             |
 | -------------- | ------ | ----------------------------------------------------------------------- |
-| chat-token     | String | Required, Deepseek API Token                                            |
+| chat-token     | String | Required, DeepSeek API Token                                            |
 | model          | String | Optional, the model used for code review, defaults to `deepseek-chat`   |
-| base-url       | String | Optional, Deepseek API Base URL, defaults to `https://api.deepseek.com` |
+| base-url       | String | Optional, DeepSeek API Base URL, defaults to `https://api.deepseek.com` |
 | max-length     | Int    | Optional, Maximum length(Unicode width) of the content for review, if the content length exceeds this value, the review will be skipped. Default `0` means no limit. |
 | sys-prompt     | String | Optional, system prompt corresponding to `$sys_prompt` in the payload, default value see note below |
 | user-prompt    | String | Optional, user prompt corresponding to `$user_prompt` in the payload, default value see note below |
@@ -109,7 +109,7 @@ With this setup, Deepseek code review will not run automatically upon PR creatio
 | exclude-patterns | String | Optional, The comma separated file patterns to exclude in the code review. Default to `pnpm-lock.yaml,package-lock.json,*.lock` |
 | github-token   | String | Optional, The `GITHUB_TOKEN` secret or personal access token to authenticate. Defaults to `github.token`. |
 
-**Deepseek API Call Payload**:
+**DeepSeek API Call Payload**:
 
 ```js
 {
@@ -146,7 +146,7 @@ To perform code reviews locally(should works for `macOS`, `Ubuntu`, and `Windows
 - Once the tools are installed, simply clone this repository to your local machine, navigate to the repository directory, and run `just code-review -h` or `just cr -h`. You should see an output similar to the following:
 
 ```console
-Use Deepseek AI to review code changes locally or in GitHub Actions
+Use DeepSeek AI to review code changes locally or in GitHub Actions
 
 Usage:
   > deepseek-review {flags} (token)
@@ -168,7 +168,7 @@ Flags:
   -h, --help: Display the help message for this command
 
 Parameters:
-  token <string>: Your Deepseek API token, fallback to CHAT_TOKEN env var (optional)
+  token <string>: Your DeepSeek API token, fallback to CHAT_TOKEN env var (optional)
 
 ```
 

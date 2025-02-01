@@ -90,7 +90,7 @@ All notable changes to this project will be documented in this file.
 
 - Fix gh token error
 - Fix add comment error
-- Make action fail if no response returned from deepseek (#3)
+- Make action fail if no response returned from DeepSeek (#3)
 
 ### Documentation
 

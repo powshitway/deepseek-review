@@ -1,12 +1,12 @@
-# Deepseek 代码审查
+# DeepSeek 代码审查
 
 ## 特性
 
-- 通过 GitHub Action 使用 Deepseek 进行自动化 PR 审查
+- 通过 GitHub Action 使用 DeepSeek 进行自动化 PR 审查
 - 通过本地 CLI 直接审查远程 GitHub PR
-- 通过本地 CLI 使用 Deepseek 分析任何本地仓库的提交变更
+- 通过本地 CLI 使用 DeepSeek 分析任何本地仓库的提交变更
 - 完全可定制：选择模型、基础 URL 和提示词
-- 支持自托管 Deepseek 模型，提供更强的灵活性
+- 支持自托管 DeepSeek 模型，提供更强的灵活性
 - 在 PR 的标题或描述中添加 `skip cr` or `skip review` 可跳过 GitHub Actions 里的代码审查
 - 对指定文件变更进行包含/排除式代码审查
 - 跨平台：支持 GitHub `macOS`, `Ubuntu` & `Windows` Runners
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Code Review
     steps:
-      - name: Deepseek Code Review
+      - name: DeepSeek Code Review
         uses: hustcer/deepseek-review@v1
         with:
           chat-token: ${{ secrets.CHAT_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
 
 </details>
 
-当 PR 创建的时候会自动触发 Deepseek 代码审查，并将审查结果（依赖于提示词）以评论的方式发布到对应的 PR 上。比如：
+当 PR 创建的时候会自动触发 DeepSeek 代码审查，并将审查结果（依赖于提示词）以评论的方式发布到对应的 PR 上。比如：
 - [示例 1](https://github.com/hustcer/deepseek-review/pull/30) 基于[默认提示词](https://github.com/hustcer/deepseek-review/blob/main/action.yaml#L35) & [运行日志](https://github.com/hustcer/deepseek-review/actions/runs/13043609677/job/36390331791#step:2:53).
 - [示例 2](https://github.com/hustcer/deepseek-review/pull/68) 基于[这个提示词](https://github.com/hustcer/deepseek-review/blob/eba892d969049caff00b51a31e5c093aeeb536e3/.github/workflows/cr.yml#L32)
 
@@ -85,21 +85,21 @@ jobs:
     # Make sure the code review happens only when the PR has the label 'ai review'
     if: contains(github.event.pull_request.labels.*.name, 'ai review')
     steps:
-      - name: Deepseek Code Review
+      - name: DeepSeek Code Review
         uses: hustcer/deepseek-review@v1
         with:
           chat-token: ${{ secrets.CHAT_TOKEN }}
 ```
 
-如此以来当 PR 创建的时候不会自动触发 Deepseek 代码审查，只有你手工添加 `ai review` 标签的时候才会触发审查。
+如此以来当 PR 创建的时候不会自动触发 DeepSeek 代码审查，只有你手工添加 `ai review` 标签的时候才会触发审查。
 
 ## 输入参数
 
 | 名称           | 类型   | 描述                                                           |
 | -------------- | ------ | -------------------------------------------------------------- |
-| chat-token     | String | 必填，Deepseek API Token                                       |
+| chat-token     | String | 必填，DeepSeek API Token                                       |
 | model          | String | 可选，配置代码审查选用的模型，默认为 `deepseek-chat`           |
-| base-url       | String | 可选，Deepseek API Base URL, 默认为 `https://api.deepseek.com` |
+| base-url       | String | 可选，DeepSeek API Base URL, 默认为 `https://api.deepseek.com` |
 | max-length     | Int    | 可选，待审查内容的最大 Unicode 长度, 默认 `0` 表示没有限制，超过非零值则跳过审查 |
 | sys-prompt     | String | 可选，系统提示词对应入参中的 `$sys_prompt`, 默认值见后文注释      |
 | user-prompt    | String | 可选，用户提示词对应入参中的 `$user_prompt`, 默认值见后文注释     |
@@ -107,7 +107,7 @@ jobs:
 | exclude-patterns | String | 可选，代码审查中要排除的以逗号分隔的文件模式，默认值为 `pnpm-lock.yaml,package-lock.json,*.lock` |
 | github-token   | String | 可选，用于访问 API 进行 PR 管理的 GitHub Token，默认为 `${{ github.token }}` |
 
-Deepseek 接口调用入参:
+DeepSeek 接口调用入参:
 
 ```js
 {
@@ -143,7 +143,7 @@ Deepseek 接口调用入参:
 - 接下来只需要把本仓库代码克隆到本地，然后进入仓库目录执行 `just code-review -h` 或者 `just cr -h` 即可看到类似如下输出:
 
 ```console
-Use Deepseek AI to review code changes locally or in GitHub Actions
+Use DeepSeek AI to review code changes locally or in GitHub Actions
 
 Usage:
   > deepseek-review {flags} (token)
@@ -165,7 +165,7 @@ Flags:
   -h, --help: Display the help message for this command
 
 Parameters:
-  token <string>: Your Deepseek API token, fallback to CHAT_TOKEN env var (optional)
+  token <string>: Your DeepSeek API token, fallback to CHAT_TOKEN env var (optional)
 
 ```
 
