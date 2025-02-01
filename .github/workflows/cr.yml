@@ -26,7 +26,7 @@ jobs:
       - name: Deepseek Code Review
         uses: hustcer/deepseek-review@develop
         with:
-          max-length: 10000
+          max-length: 15000
           # Store the chat token in GitHub Secrets, don't expose it in the workflow file
           chat-token: ${{ secrets.CHAT_TOKEN }}
           sys-prompt: >
