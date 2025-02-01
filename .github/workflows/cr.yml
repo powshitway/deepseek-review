@@ -1,7 +1,5 @@
 # Description:
 #   - Deepseek code review with GitHub Actions
-# REF:
-#   - https://github.com/marketplace/actions/checkout
 
 name: Code Review
 on:

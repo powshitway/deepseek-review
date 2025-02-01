@@ -2,11 +2,12 @@
 # Author: hustcer
 # Created: 2025/01/29 13:02:15
 # TODO:
-#   [√] Deepseek code review for GitHub PRs
-#   [√] Deepseek code review for local commit changes
-#   [√] Debug mode
-#   [√] Output token usage info
-#   [ ] Add more action outputs
+#  [√] Deepseek code review for GitHub PRs
+#  [√] Deepseek code review for local commit changes
+#  [√] Debug mode
+#  [√] Output token usage info
+#  [√] Perform CR for changes that either include or exclude specific files
+#  [ ] Add more action outputs
 # Description: A script to do code review by deepseek
 # Env vars:
 #  GITHUB_TOKEN: Your GitHub API token
