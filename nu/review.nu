@@ -15,10 +15,9 @@
 #  SYSTEM_PROMPT: System prompt message
 #  USER_PROMPT: User prompt message
 # Usage:
-#  1. Local Repo Review: just cr
-#  2. Local Repo Review: just cr -f HEAD~1 --debug
-#  3. Local PR Review: just cr -r hustcer/deepseek-review -n 32
-#
+#  - Local Repo Review: just cr
+#  - Local Repo Review: just cr -f HEAD~1 --debug
+#  - Local PR Review: just cr -r hustcer/deepseek-review -n 32
 
 # Commonly used exit codes
 const ECODE = {
@@ -48,14 +47,16 @@ export def --env deepseek-review [
   --debug(-d),              # Debug mode
   --repo(-r): string,       # GitHub repository name, e.g. hustcer/deepseek-review
   --pr-number(-n): string,  # GitHub PR number
-  --gh-token: string,       # Your GitHub token, fallback to GITHUB_TOKEN env var
+  --gh-token(-k): string,   # Your GitHub token, fallback to GITHUB_TOKEN env var
   --diff-to(-t): string,    # Diff to git REF
   --diff-from(-f): string,  # Diff from git REF
   --max-length(-l): int,    # Maximum length of the content for review, 0 means no limit.
   --model(-m): string = $DEFAULT_OPTIONS.MODEL,   # Model name, deepseek-chat by default
-  --base-url: string = $DEFAULT_OPTIONS.BASE_URL,
+  --base-url(-b): string = $DEFAULT_OPTIONS.BASE_URL,
   --sys-prompt(-s): string  # Default to $DEFAULT_OPTIONS.SYS_PROMPT,
   --user-prompt(-u): string # Default to $DEFAULT_OPTIONS.USER_PROMPT,
+  --include(-i): string,    # Comma separated file patterns to include in the code review
+  --exclude(-x): string,    # Comma separated file patterns to exclude in the code review
 ]: nothing -> nothing {
   $env.config.table.mode = 'psql'
   let is_action = ($env.GITHUB_ACTIONS? == 'true')
@@ -67,6 +68,8 @@ export def --env deepseek-review [
   let max_length = $max_length | default ($env.MAX_LENGTH? | default 0 | into int)
   let setting = {
     repo: $repo,
+    include: $include,
+    exclude: $exclude,
     diff_to: $diff_to,
     diff_from: $diff_from,
     pr_number: $pr_number,
@@ -90,8 +93,10 @@ export def --env deepseek-review [
   print $hint; print -n (char nl)
   if ($pr_number | is-empty) { $setting | compact-record | reject repo | print }
 
-  let diff_content = get-diff --pr-number $pr_number --repo $repo --diff-to $diff_to --diff-from $diff_from
-  let length = $diff_content | str stats | get unicode-width
+  let content = (
+    get-diff --pr-number $pr_number --repo $repo --diff-to $diff_to
+             --diff-from $diff_from --include $include --exclude $exclude)
+  let length = $content | str stats | get unicode-width
   if ($max_length != 0) and ($length > $max_length) {
     print $'(char nl)(ansi r)The content length ($length) exceeds the maximum limit ($max_length), review skipped.(ansi reset)'
     exit $ECODE.SUCCESS
@@ -104,10 +109,10 @@ export def --env deepseek-review [
     stream: false,
     messages: [
       { role: 'system', content: $sys_prompt },
-      { role: 'user', content: $"($user_prompt):\n($diff_content)" }
+      { role: 'user', content: $"($user_prompt):\n($content)" }
     ]
   }
-  if $debug { print $'Code Changes:'; hr-line; print $diff_content }
+  if $debug { print $'Code Changes:'; hr-line; print $content }
   print $'(char nl)(ansi g)Waiting for response from Deepseek ...(ansi reset)'
   let response = http post -e -H $header -t application/json $url $payload
   if ($response | is-empty) {
@@ -151,6 +156,8 @@ export def get-diff [
   --pr-number: string,  # GitHub PR number
   --diff-to: string,    # Diff to git ref
   --diff-from: string,  # Diff from git ref
+  --include: string,    # Comma separated file patterns to include in the code review
+  --exclude: string,    # Comma separated file patterns to exclude in the code review
 ] {
   let local_repo = $env.DEFAULT_LOCAL_REPO? | default (pwd)
   if not ($local_repo | path exists) {
@@ -158,7 +165,7 @@ export def get-diff [
     exit $ECODE.CONDITION_NOT_SATISFIED
   }
   cd $local_repo
-  let diff_content = if ($pr_number | is-not-empty) {
+  mut content = if ($pr_number | is-not-empty) {
       if ($repo | is-empty) {
         print $'(ansi r)Please provide the GitHub repository name by `--repo` option.(ansi reset)'
         exit $ECODE.INVALID_PARAMETER
@@ -185,10 +192,18 @@ export def get-diff [
       exit $ECODE.CONDITION_NOT_SATISFIED
     } else { git diff }
 
-  if ($diff_content | is-empty) {
+  if ($content | is-empty) {
     print $'(ansi g)Nothing to review.(ansi reset)'; exit $ECODE.SUCCESS
   }
-  $diff_content
+  if ($include | is-not-empty) {
+    let patterns = $include | split row ','
+    $content = $content | awk (generate-include-regex $patterns)
+  }
+  if ($exclude | is-not-empty) {
+    let patterns = $exclude | split row ','
+    $content = $content | awk (generate-exclude-regex $patterns)
+  }
+  $content
 }
 
 # Compact the record by removing empty columns
@@ -259,6 +274,18 @@ export def hr-line [
 
   print $'(ansi $color)(build-line $width)(if $with_arrow {'>'})(ansi reset)'
   if $blank_line { char nl }
+}
+
+# Generate the awk include regex pattern string for the specified patterns
+export def generate-include-regex [patterns: list<string>] {
+  let pattern = $patterns | each {|pat| $pat | str replace '/' '\/' } | str join '|'
+  $"/^diff --git/{p=/^diff --git a\\/($pattern)/}p"
+}
+
+# Generate the awk exclude regex pattern string for the specified patterns
+def generate-exclude-regex [patterns: list<string>] {
+  let pattern = $patterns | each {|pat| $pat | str replace '/' '\/' } | str join '|'
+  $"/^diff --git/{p=/^diff --git a\\/($pattern)/}!p"
 }
 
 alias main = deepseek-review
