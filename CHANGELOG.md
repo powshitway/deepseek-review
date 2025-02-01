@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] - 2025-02-01
+
+### Bug Fixes
+
+- Fix `awk` error on `macOS` runner (#71)
+
 ## [1.5.0] - 2025-02-01
 
 ### Documentation
