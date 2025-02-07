@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2025-02-07
+
+### Features
+
+- Read `CHAT_MODEL` and `BASE_URL` from `.env` for local code review (#80)
+
+### Miscellaneous Tasks
+
+- Use SiliconFlow's DeepSeek model
+- Remove the dependency on `gh` (#78)
+
+### Deps
+
+- Upgrade `Nushell` to v0.102 (#76)
+
 ## [1.5.1] - 2025-02-01
 
 ### Bug Fixes
