@@ -68,6 +68,7 @@ export def --env deepseek-review [
   --include(-i): string,    # Comma separated file patterns to include in the code review
   --exclude(-x): string,    # Comma separated file patterns to exclude in the code review
 ]: nothing -> nothing {
+
   $env.config.table.mode = 'psql'
   let is_action = ($env.GITHUB_ACTIONS? == 'true')
   let token = $token | default $env.CHAT_TOKEN?
@@ -91,6 +92,7 @@ export def --env deepseek-review [
     local_repo: $local_repo,
   }
   $env.GH_TOKEN = $gh_token | default $env.GITHUB_TOKEN?
+
   if ($token | is-empty) {
     print $'(ansi r)Please provide your DeepSeek API token by setting `CHAT_TOKEN` or passing it as an argument.(ansi reset)'
     exit $ECODE.INVALID_PARAMETER
@@ -183,32 +185,32 @@ export def get-diff [
   }
   cd $local_repo
   mut content = if ($pr_number | is-not-empty) {
-      if ($repo | is-empty) {
-        print $'(ansi r)Please provide the GitHub repository name by `--repo` option.(ansi reset)'
-        exit $ECODE.INVALID_PARAMETER
-      }
-      # TODO: Ignore keywords checking when triggering by mentioning the bot
-      let description = http get -H $BASE_HEADER $'($GITHUB_API_BASE)/repos/($repo)/pulls/($pr_number)'
-                                          | select title body | values | str join "\n"
-      if ($IGNORE_REVIEW_KEYWORDS | any {|it| $description =~ $it }) {
-        print $'(ansi r)The PR title or body contains keywords to skip the review, bye...(ansi reset)'
-        exit $ECODE.SUCCESS
-      }
-      http get -H $DIFF_HEADER $'($GITHUB_API_BASE)/repos/($repo)/pulls/($pr_number)' | str trim
-    } else if ($diff_from | is-not-empty) {
-      if not (has-ref $diff_from) {
-        print $'(ansi r)The specified git ref ($diff_from) does not exist, please check it again.(ansi reset)'
-        exit $ECODE.INVALID_PARAMETER
-      }
-      if ($diff_to | is-not-empty) and not (has-ref $diff_to) {
-        print $'(ansi r)The specified git ref ($diff_to) does not exist, please check it again.(ansi reset)'
-        exit $ECODE.INVALID_PARAMETER
-      }
-      git diff $diff_from ($diff_to | default HEAD)
-    } else if not (git-check $local_repo --check-repo=1) {
-      print $'Current directory ($local_repo) is (ansi r)NOT(ansi reset) a git repo, bye...(char nl)'
-      exit $ECODE.CONDITION_NOT_SATISFIED
-    } else { git diff }
+    if ($repo | is-empty) {
+      print $'(ansi r)Please provide the GitHub repository name by `--repo` option.(ansi reset)'
+      exit $ECODE.INVALID_PARAMETER
+    }
+    # TODO: Ignore keywords checking when triggering by mentioning the bot
+    let description = http get -H $BASE_HEADER $'($GITHUB_API_BASE)/repos/($repo)/pulls/($pr_number)'
+                                        | select title body | values | str join "\n"
+    if ($IGNORE_REVIEW_KEYWORDS | any {|it| $description =~ $it }) {
+      print $'(ansi r)The PR title or body contains keywords to skip the review, bye...(ansi reset)'
+      exit $ECODE.SUCCESS
+    }
+    http get -H $DIFF_HEADER $'($GITHUB_API_BASE)/repos/($repo)/pulls/($pr_number)' | str trim
+  } else if ($diff_from | is-not-empty) {
+    if not (has-ref $diff_from) {
+      print $'(ansi r)The specified git ref ($diff_from) does not exist, please check it again.(ansi reset)'
+      exit $ECODE.INVALID_PARAMETER
+    }
+    if ($diff_to | is-not-empty) and not (has-ref $diff_to) {
+      print $'(ansi r)The specified git ref ($diff_to) does not exist, please check it again.(ansi reset)'
+      exit $ECODE.INVALID_PARAMETER
+    }
+    git diff $diff_from ($diff_to | default HEAD)
+  } else if not (git-check $local_repo --check-repo=1) {
+    print $'Current directory ($local_repo) is (ansi r)NOT(ansi reset) a git repo, bye...(char nl)'
+    exit $ECODE.CONDITION_NOT_SATISFIED
+  } else { git diff }
 
   if ($content | is-empty) {
     print $'(ansi g)Nothing to review.(ansi reset)'; exit $ECODE.SUCCESS
@@ -335,7 +337,7 @@ export def "from env" []: string -> record {
           | str replace -a "\\n" "\n"   # replace `\n` with newline char
           | str replace -a "\\r" "\r"   # replace `\r` with carriage return
           | str replace -a "\\t" "\t"   # replace `\t` with tab
-    }
+      }
     | transpose -r -d
 }
 
