@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - 2025-02-08
+
+### Features
+
+- Remove the dependency on `just` for local code review (#84)
+
+### Bug Fixes
+
+- Fix possible GitHub comment posting errors
+
+### Refactor
+
+- Improve prompts loading helper (#82)
+
 ## [1.6.0] - 2025-02-07
 
 ### Features
