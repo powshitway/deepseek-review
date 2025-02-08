@@ -1,5 +1,7 @@
 # DeepSeek 代码审查
 
+本工具也支持使用 SiliconCloud 上的 DeepSeek 模型，[注册](https://cloud.siliconflow.cn/i/rqCdIxzS) 就**免费赠送 2000 万 Token**，赶紧试试吧！
+
 ## 特性
 
 - 通过 GitHub Action 使用 DeepSeek 进行自动化 PR 审查

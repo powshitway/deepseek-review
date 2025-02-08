@@ -2,6 +2,8 @@
 
 [中文说明](README.zh-CN.md)
 
+`deepseek-review` also offers seamless integration with DeepSeek models on SiliconCloud. [Sign Up Now](https://cloud.siliconflow.cn/i/rqCdIxzS) to **Claim Your Free 20 Million Tokens** and start exploring its capabilities!
+
 ## Features
 
 - Automate PR Reviews with DeepSeek via GitHub Action
