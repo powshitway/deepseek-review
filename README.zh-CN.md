@@ -150,7 +150,7 @@ DeepSeek 接口调用入参:
 Use DeepSeek AI to review code changes locally or in GitHub Actions
 
 Usage:
-  > cr {flags} (token)
+  > nu cr {flags} (token)
 
 Flags:
   -d, --debug: Debug mode
@@ -160,12 +160,13 @@ Flags:
   -t, --diff-to <string>: Diff to git REF
   -f, --diff-from <string>: Diff from git REF
   -l, --max-length <int>: Maximum length of the content for review, 0 means no limit.
-  -m, --model <string>: Model name, deepseek-chat by default (default: 'deepseek-chat')
-  -b, --base-url <string> (default: 'https://api.deepseek.com')
+  -m, --model <string>: Model name, or read from CHAT_MODEL env var, `deepseek-chat` by default
+  -b, --base-url <string>: DeepSeek API base URL, fallback to BASE_URL env var
   -s, --sys-prompt <string>: Default to $DEFAULT_OPTIONS.SYS_PROMPT,
   -u, --user-prompt <string>: Default to $DEFAULT_OPTIONS.USER_PROMPT,
   -i, --include <string>: Comma separated file patterns to include in the code review
   -x, --exclude <string>: Comma separated file patterns to exclude in the code review
+  -T, --temperature <float>: Temperature for the model, between `0` and `2`, default value `1.0`
   -h, --help: Display the help message for this command
 
 Parameters:
