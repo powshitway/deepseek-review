@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.8.0] - 2025-02-10
+
+### Bug Fixes
+
+- Add check for empty DeepSeek review response with error handling (#90)
+- Add `awk` binary missing check (#92)
+
+### Features
+
+- Add version validation for `awk`/`gawk` and implement robust semantic version comparison for compatibility checks (#91)
+- Add support for configurable `temperature` parameter in DeepSeek model setup (#93)
+
+### Miscellaneous Tasks
+
+- Update README add `awk` or `gawk` as required tools
+
+### Refactor
+
+- Streamline main wrapper and simplify argument handling for `nu/review.nu` integration (#88)
+
 ## [1.7.0] - 2025-02-08
 
 ### Features
