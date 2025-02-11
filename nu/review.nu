@@ -8,6 +8,7 @@
 #  [√] Output token usage info
 #  [√] Perform CR for changes that either include or exclude specific files
 #  [√] Support streaming output for local code review
+#  [√] Support using custom patch command to get diff content
 #  [ ] Add more action outputs
 # Description: A script to do code review by DeepSeek
 # REF:
@@ -65,6 +66,7 @@ export def --env deepseek-review [
   --gh-token(-k): string,   # Your GitHub token, fallback to GITHUB_TOKEN env var
   --diff-to(-t): string,    # Diff to git REF
   --diff-from(-f): string,  # Diff from git REF
+  --patch-cmd(-c): string,  # The `git show` or `git diff` command to get the diff content, for local CR only
   --max-length(-l): int,    # Maximum length of the content for review, 0 means no limit.
   --model(-m): string,      # Model name, or read from CHAT_MODEL env var, `deepseek-chat` by default
   --base-url(-b): string,   # DeepSeek API base URL, fallback to BASE_URL env var
@@ -99,6 +101,7 @@ export def --env deepseek-review [
     exclude: $exclude,
     diff_to: $diff_to,
     diff_from: $diff_from,
+    patch_cmd: $patch_cmd,
     pr_number: $pr_number,
     max_length: $max_length,
     local_repo: $local_repo,
@@ -120,7 +123,7 @@ export def --env deepseek-review [
 
   let content = (
     get-diff --pr-number $pr_number --repo $repo --diff-to $diff_to
-             --diff-from $diff_from --include $include --exclude $exclude)
+             --diff-from $diff_from --include $include --exclude $exclude --patch-cmd $patch_cmd)
   let length = $content | str stats | get unicode-width
   if ($max_length != 0) and ($length > $max_length) {
     print $'(char nl)(ansi r)The content length ($length) exceeds the maximum limit ($max_length), review skipped.(ansi reset)'
@@ -182,13 +185,14 @@ def streaming-output [
         if $line == $RESPONSE_END { return }
         if ($line | is-empty) { return }
         let $last = $line | str substring 6.. | from json
+        if $last == '-alive' { print $last; return }
         if $debug { $last | to json | save -rf $LAST_REPLY_TMP }
         $last | get choices.0.delta | if ($in | is-not-empty) { print -n $in.content }
       }
 
   if $debug and ($LAST_REPLY_TMP | path exists) {
     print $'(char nl)(char nl)DeepSeek Token Usage:'; hr-line
-    open $LAST_REPLY_TMP | select model usage | table -e | print
+    open $LAST_REPLY_TMP | select -i model usage | table -e | print
     rm -f $LAST_REPLY_TMP
   }
 }
@@ -220,6 +224,7 @@ export def get-diff [
   --diff-from: string,  # Diff from git ref
   --include: string,    # Comma separated file patterns to include in the code review
   --exclude: string,    # Comma separated file patterns to exclude in the code review
+  --patch-cmd: string,  # The `git show` or `git diff` command to get the diff content
 ] {
   let BASE_HEADER = [Authorization $'Bearer ($env.GH_TOKEN)' Accept application/vnd.github.v3+json]
   let DIFF_HEADER = [Authorization $'Bearer ($env.GH_TOKEN)' Accept application/vnd.github.v3.diff]
@@ -255,6 +260,10 @@ export def get-diff [
   } else if not (git-check $local_repo --check-repo=1) {
     print $'Current directory ($local_repo) is (ansi r)NOT(ansi reset) a git repo, bye...(char nl)'
     exit $ECODE.CONDITION_NOT_SATISFIED
+  } else if ($patch_cmd | is-not-empty) {
+    let valid = is-safe-git $patch_cmd
+    if not $valid { exit $ECODE.INVALID_PARAMETER }
+    nu -c $patch_cmd
   } else { git diff }
 
   if ($content | is-empty) {
@@ -428,6 +437,68 @@ export def compare-ver [v1: string, v2: string] {
     if $x < $y { return (-1) }
   }
   0
+}
+
+# Check if the git command is safe to run in the shell
+# Validate command examples:
+#  - git show
+#  - git diff
+#  - git show head~1
+#  - git diff --since=2025-02-09 HEAD
+#  - git diff 2393375 71f5a31
+#  - git diff 2393375 71f5a31 nu/*
+#  - git diff 2393375 71f5a31 :!nu/*
+export def is-safe-git [cmd: string] {
+  # Normalize the command string by trimming and converting to lowercase
+  let normalized_cmd = ($cmd | str trim | str downcase)
+
+  # More strict regex for git commands, allow:
+  # 1. --since parameter with ISO date format
+  # 2. File path patterns with or without colon (e.g. :!nu/*, nu/*)
+  let allowed_regex = '^git\s+(show|diff)(?:\s+(?:--since=\d{4}-\d{2}-\d{2}|[a-zA-Z0-9_\-\.~/]+))*(?:\s+(?::[!]?)?[a-zA-Z0-9_\-\.\*\/]+)?$'
+
+  # Dangerous patterns to check (expanded list)
+  let dangerous_patterns = [
+    # Command chaining/injection
+    ';', '&&', '||', '|',
+    # Shell expansion
+    '?', '[', ']', '{', '}',
+    # Command substitution
+    '`', '$(',
+    # IO redirection
+    '>', '>>', '<', '<<',
+    # Special characters
+    '\n', '\r', '\t',
+    # Path traversal
+    '..',
+    # Environment variables
+    '$', '%',
+    # Quotes that might be used for injection
+    '"', "'"
+  ]
+
+  # First check: Command must match the allowed pattern
+  if ($normalized_cmd | find -r $allowed_regex | is-empty) {
+    print $'ERROR: Invalid git command format. (ansi r)Only simple `git show` or `git diff` commands are allowed(ansi reset).'
+    return false
+  }
+
+  # Second check: No dangerous patterns allowed
+  for pattern in $dangerous_patterns {
+    if ($cmd | str contains $pattern) {
+      print $'(ansi r)ERROR: Dangerous pattern detected: `($pattern)`(ansi reset)'
+      return false
+    }
+  }
+
+  # Third check: Command parts validation (increased limit to accommodate path patterns)
+  let cmd_parts = $normalized_cmd | split row ' '
+  if ($cmd_parts | length) > 6 {
+    print $'ERROR: Command too complex. (ansi r)Only simple `git show` or `git diff` commands are allowed(ansi reset).'
+    return false
+  }
+
+  true
 }
 
 alias main = deepseek-review
