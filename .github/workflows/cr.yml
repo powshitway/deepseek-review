@@ -26,7 +26,8 @@ jobs:
         with:
           max-length: 15000
           # SiliconFlow's DeepSeek model
-          model: 'deepseek-ai/DeepSeek-V3'
+          # model: 'deepseek-ai/DeepSeek-V3'
+          model: 'deepseek-ai/DeepSeek-R1'
           base-url: 'https://api.siliconflow.cn/v1'
           # Store the chat token in GitHub Secrets, don't expose it in the workflow file
           chat-token: ${{ secrets.CHAT_TOKEN }}
