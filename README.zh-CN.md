@@ -18,6 +18,7 @@
 ## 计划支持特性
 
 - [ ] **通过提及触发代码审查**：当 PR 评论中提及 `github-actions bot` 时，自动触发代码审查
+- [ ] **本地生成提交信息**：为本地仓库的代码变更生成 Commit Message
 
 ## 通过 GitHub Action 进行代码审查
 

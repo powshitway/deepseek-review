@@ -20,6 +20,7 @@
 ## Planned Features
 
 - [ ] **Trigger Code Review on Mention**: Automatically initiate code review when the `github-actions` bot is mentioned in a PR comment.
+- [ ] **Generate Commit Message Locally**: Generate a commit message for the code changes in any local repository.
 
 ## Code Review with GitHub Action
 
