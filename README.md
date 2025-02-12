@@ -11,6 +11,7 @@
 - Analyze Commit Changes with DeepSeek for Any Local Repository with CLI
 - Streaming Output Support for Local Code Review
 - Fully Customizable: Choose Models, Base URLs, and Prompts
+- Support Both DeepSeek's V3 & R1 Models
 - Supports Self-Hosted DeepSeek Models for Enhanced Flexibility
 - Perform Code Reviews for Changes That either Include or Exclude Specific Files
 - Add `skip cr` or `skip review` to PR title or body to disable code review in GitHub Actions
@@ -204,7 +205,7 @@ nu cr -c 'git show head~3'
 nu cr -c 'git diff 2393375 71f5a31'
 nu cr -c 'git diff 2393375 71f5a31 nu/*'
 nu cr -c 'git diff 2393375 71f5a31 :!nu/*'
-nu cr -c 'git diff --since=2025-02-09 HEAD'
+# Dangerous commands like `nu cr -c 'git show head~3; rm ./*'` will not be allowed
 # Perform code review on PR #31 in the remote DEFAULT_GITHUB_REPO repo
 nu cr --pr-number 31
 # Perform code review on PR #31 in the remote hustcer/deepseek-review repo
