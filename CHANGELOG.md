@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2025-02-12
+
+### Bug Fixes
+
+- Fix no repo column error for local code review (#102)
+
+### Features
+
+- Add streaming output support for local code review (#103)
+- Add support for custom patch commands by `-c, --patch-cmd` flag in local code review (#106)
+- Add DeepSeek R1 model support (#107)
+
 ## [1.8.0] - 2025-02-10
 
 ### Bug Fixes
