@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2025-02-12
+
+### Features
+
+- Separate the reasoning and the content part of the output (#115)
+
+### Bug Fixes
+
+- Improve error handling of API response for streaming-output (#117)
+
+### Miscellaneous Tasks
+
+- Make `awk` version check works for both `awk` and `gawk` (#109)
+- Refine DeepSeek review output, clarify debug logs, and adjust error messaging for better context (#111)
+
+### Performance
+
+- Save the last reply of the model to db instead of a file (#113)
+
 ## [1.9.0] - 2025-02-12
 
 ### Bug Fixes
