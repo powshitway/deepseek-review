@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.11.0] - 2025-02-13
+
+### Bug Fixes
+
+- Do not show reasoning parts if reviewed by DeepSeek V3 model (#121)
+- Fix `reasoning_content` field may not exists error
+- Fix `include` & `exclude` pattern matching error (#122)
+
 ## [1.10.0] - 2025-02-12
 
 ### Features
