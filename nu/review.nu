@@ -208,11 +208,11 @@ def streaming-output [
         if $debug { $last | to json | kv set last-reply }
         $last | get -i choices.0.delta | if ($in | is-not-empty) {
           let delta = $in
-          if ($delta.reasoning_content | is-not-empty) { kv set reasoning ((kv get reasoning) + 1) }
+          if ($delta.reasoning_content? | is-not-empty) { kv set reasoning ((kv get reasoning) + 1) }
           if (kv get reasoning) == 1 { print $'(char nl)Reasoning Details:'; hr-line }
           if ($delta.content | is-not-empty) { kv set content ((kv get content) + 1) }
           if (kv get content) == 1 { print $'(char nl)Review Details:'; hr-line }
-          print -n ($delta.reasoning_content | default $delta.content)
+          print -n ($delta.reasoning_content? | default $delta.content)
         }
       }
 
