@@ -160,7 +160,7 @@ Usage:
 
 Flags:
   -d, --debug: Debug mode
-  -r, --repo <string>: GitHub repository name, e.g. hustcer/deepseek-review
+  -r, --repo <string>: GitHub repo name, e.g. hustcer/deepseek-review, or local repo path / alias
   -n, --pr-number <string>: GitHub PR number
   -k, --gh-token <string>: Your GitHub token, fallback to GITHUB_TOKEN env var
   -t, --diff-to <string>: Diff to git REF
@@ -183,13 +183,13 @@ Parameters:
 
 ### Environment Configuration
 
-To perform code reviews locally, you need to modify the configuration file. A sample configuration file `.env.example` is already provided in the repository. Copy it to `.env` and adjust it according to your actual setup.
+To perform code reviews locally, you need to modify the configuration file. A sample configuration file `config.example.yml` is already provided in the repository. Copy it to `config.yml` and adjust it according to your actual setup.
 
 > [!WARNING]
 >
-> The `.env` configuration file is only used locally and will not be utilized in GitHub
-> Workflow. Please securely store any sensitive information in it and avoid committing
-> it to the code repository.
+> The `config.yml` configuration file is only used locally and will not be utilized in GitHub
+> Workflow. Please securely store any sensitive information in it and avoid committing it
+> to the code repository.
 
 ### Usage Examples
 

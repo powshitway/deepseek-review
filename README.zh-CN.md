@@ -157,7 +157,7 @@ Usage:
 
 Flags:
   -d, --debug: Debug mode
-  -r, --repo <string>: GitHub repository name, e.g. hustcer/deepseek-review
+  -r, --repo <string>: GitHub repo name, e.g. hustcer/deepseek-review, or local repo path / alias
   -n, --pr-number <string>: GitHub PR number
   -k, --gh-token <string>: Your GitHub token, fallback to GITHUB_TOKEN env var
   -t, --diff-to <string>: Diff to git REF
@@ -180,11 +180,11 @@ Parameters:
 
 ### 环境配置
 
-在本地进行代码审查需要先修改配置文件，仓库里已经有了 `.env.example` 配置文件示例，将其拷贝到 `.env` 然后根据自己的实际情况进行修改即可。
+在本地进行代码审查需要先修改配置文件，仓库里已经有了 `config.example.yml` 配置文件示例，将其拷贝到 `config.yml` 然后根据自己的实际情况进行修改即可。
 
 > [!WARNING]
 >
-> `.env` 配置文件仅在本地使用，在 GitHub Workflow 里面不会使用，里面的敏感信息请
+> `config.yml` 配置文件仅在本地使用，在 GitHub Workflow 里面不会使用，里面的敏感信息请
 > 妥善保存，不要提交到代码仓库里面
 
 ### 使用举例
