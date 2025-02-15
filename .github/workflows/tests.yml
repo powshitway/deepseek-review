@@ -31,7 +31,7 @@ jobs:
       pull-requests: write
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         version: ['*', nightly]   # Earliest supported, latest and nightly
         platform: [ubuntu-latest, windows-latest, macos-latest]
@@ -58,6 +58,8 @@ jobs:
         shell: nu {0}
         run: |
           use ${{ github.workspace }}/nutest/nutest
+          use ${{ github.workspace }}/nu/review.nu [prepare-awk]
+          prepare-awk
           (
             nutest run-tests
               --fail
