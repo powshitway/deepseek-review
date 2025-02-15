@@ -2,26 +2,33 @@
 # REF:
 #   - https://github.com/vyadh/nutest/blob/main/.github/workflows/tests.yaml
 
-name: Tests
+name: Run Tests
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   workflow_dispatch:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   schedule:
-    - cron: '0 7 * * *'   # Run every morning at 7am UTC
+    - cron: '0 0 * * *'   # Run every morning at 0am UTC
 
 permissions:
   contents: read
 
 jobs:
-  nutest-tests:
+  run-tests:
     name: Run Tests
 
     permissions:
       checks: write
+      pull-requests: write
 
     strategy:
       fail-fast: true
@@ -58,3 +65,24 @@ jobs:
               --report { type: junit, path: test-report.xml }
               --returns summary | to json | save --force test-summary.json
           )
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: runner.os == 'Linux' && always()
+        with:
+          comment_mode: off
+          files: test-report.xml
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: runner.os == 'macOS' && always()
+        with:
+          comment_mode: off
+          files: test-report.xml
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: runner.os == 'Windows' && always()
+        with:
+          comment_mode: off
+          files: test-report.xml
