@@ -1,5 +1,10 @@
 # DeepSeek Code Review
 
+![Tests](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgist.githubusercontent.com%2Fhustcer%2Fb99391ee59016b17d0befe3331387e89%2Fraw%2Ftest-summary.json&query=%24.total&label=Tests)
+![Passed](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgist.githubusercontent.com%2Fhustcer%2Fb99391ee59016b17d0befe3331387e89%2Fraw%2Ftest-summary.json&query=%24.passed&label=Passed&color=%2331c654)
+![Failed](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgist.githubusercontent.com%2Fhustcer%2Fb99391ee59016b17d0befe3331387e89%2Fraw%2Ftest-summary.json&query=%24.failed&label=Failed&color=red)
+![Skipped](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgist.githubusercontent.com%2Fhustcer%2Fb99391ee59016b17d0befe3331387e89%2Fraw%2Ftest-summary.json&query=%24.skipped&label=Skipped&color=yellow)
+
 [中文说明](README.zh-CN.md)
 
 `deepseek-review` also offers seamless integration with DeepSeek models on SiliconCloud. [Sign Up Now](https://cloud.siliconflow.cn/i/rqCdIxzS) to **Claim Your Free 20 Million Tokens** and start exploring its capabilities!
