@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./CR.jpg" width="90" height="60" alt="DeepSeek Code Review Logo" />
+</p>
+
 # DeepSeek Code Review
 
 ![Tests](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgist.githubusercontent.com%2Fhustcer%2Fb99391ee59016b17d0befe3331387e89%2Fraw%2Ftest-summary.json&query=%24.total&label=Tests)
