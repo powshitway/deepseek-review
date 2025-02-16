@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - 2025-02-16
+
+### Bug Fixes
+
+- Fix `include` and `exclude` on GitHub Windows runners and related tests (#131)
+
+### Documentation
+
+- Update README (#126)
+
+### Features
+
+- Use `config.yml` instead of `.env` as the local code review config file (#123)
+
+### Miscellaneous Tasks
+
+- Try to add tests workflow and some common tests (#125)
+- Add review related tests (#129)
+- Add tests for `get-diff` command in review module
+- Add `ubuntu-22.04-arm` to test matrix
+- Fix `gawk` installation for GitHub Windows runners (#132)
+
 ## [1.11.0] - 2025-02-13
 
 ### Bug Fixes
