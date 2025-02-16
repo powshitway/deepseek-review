@@ -104,3 +104,12 @@ def 'get-diff：get patch from remote PR with exclude should work' [] {
   let patch = get-diff --pr-number 93 --repo $repo --exclude **/*.yaml,**/*.nu,*.md
   assert equal ($patch | get-uw) 555
 }
+
+#[test]
+def 'get-diff：get patch from remote PR with exclude & include should work' [] {
+  $env.GH_TOKEN = $env.GITHUB_TOKEN?
+  const repo = 'hustcer/deepseek-review'
+  if ($env.GH_TOKEN | is-empty) { print '$env.GH_TOKEN is empty'; return }
+  let patch = get-diff --pr-number 93 --repo $repo --exclude **/*.yaml,*.md --include **/*.nu
+  assert equal ($patch | get-uw) 2576
+}

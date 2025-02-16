@@ -409,7 +409,6 @@ export def is-safe-git [cmd: string] {
     print $'ERROR: Command too complex. (ansi r)Only simple `git show` or `git diff` commands are allowed(ansi reset).'
     return false
   }
-
   true
 }
 
@@ -420,8 +419,8 @@ def install-gawk-for-actions [] {
   # Install scoop using PowerShell
   pwsh -c r#'
     Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://get.scoop.sh")
-    $env:Path = "$env:USERPROFILE\scoop\shims;" + $env:Path; scoop update; scoop install gawk'#
-      | complete | get stdout | print
+    $env:Path = "$env:USERPROFILE\scoop\shims;" + $env:Path; scoop update; scoop install gawk
+    '# | complete | get stdout | print
   let awk_bin = $'($nu.home-path)/scoop/shims/gawk.exe'
   let version = get-awk-ver $awk_bin
   { awk_bin: $awk_bin, version: $version }
