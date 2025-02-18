@@ -156,6 +156,7 @@ prompts:
           {{/optimizations}}
 
           **Overall Quality:** {{rating}}
+        ```
 
     - name: java
       prompt: >
@@ -226,6 +227,7 @@ prompts:
           {{/optimizations}}
 
           **Overall Quality:** {{rating}}
+        ```
 
     - name: rust
       prompt: >
@@ -296,6 +298,7 @@ prompts:
           {{/optimizations}}
 
           **Overall Quality:** {{rating}}
+        ```
 
     - name: strict-dev
       prompt: >
