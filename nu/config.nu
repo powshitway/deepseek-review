@@ -91,9 +91,9 @@ def check-models [options: record] {
 }
 
 # Check if the config.yml file exists and if it's valid
-export def config-check [] {
-  file-exists $SETTING_FILE
-  let options = open $SETTING_FILE
+export def config-check [--config: string = $SETTING_FILE] {
+  file-exists $config
+  let options = open $config
   check-prompts $options
   check-providers $options
   check-models $options
@@ -123,10 +123,11 @@ def get-model-envs [settings: record, model?: string = ''] {
 # Load the config.yml file to the environment
 export def --env config-load [
   --debug(-d),                # Print the loaded environment variables
+  --config(-C): string,       # The config file path, default to `config.yml`
   --repo(-r): string,         # Load the specified local repository by name
   --model(-m): string,        # Load the specified model by name
 ] {
-  let all_settings = open $SETTING_FILE
+  let all_settings = open ($config | default $SETTING_FILE)
   let settings = $all_settings | get settings? | default {}
   let local_repo = $all_settings.local-repos
     | default []
