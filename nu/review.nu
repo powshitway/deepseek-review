@@ -364,11 +364,36 @@ export def prepare-awk [] {
 # 2. Convert ? to . (optional, as needed)
 # 3. Convert / to \/
 def glob-to-regex [patterns: list<string>] {
+  # Handle empty patterns list
+  if ($patterns | length) == 0 { return '' }
+
+  # Define a mapping of characters to escape
+  let regex_escapes = {
+    # Escape special regex characters first
+    "\\.": "\\\\.",
+    "\\+": "\\\\+",
+    "\\^": "\\\\^",
+    "\\$": "\\\\$",
+    "\\(": "\\\\(",
+    "\\)": "\\\\)",
+    "\\[": "\\\\[",
+    "\\]": "\\\\]",
+    "\\{": "\\\\{",
+    "\\}": "\\\\}",
+    "\\|": "\\\\|",
+    # Then convert glob patterns to regex patterns
+    "*": ".*",
+    "?": ".",
+    "/": "\\/",
+  }
+
   $patterns
     | each { |pat|
-        $pat | str replace "*" ".*" | str replace "?" "." | str replace "/" "\\/"
+        $regex_escapes | columns | reduce -f $pat { |k, acc|
+          $acc | str replace -a $k ($regex_escapes | get $k)
+        }
       }
-    | str join "|"
+    | str join '|'
 }
 
 # Generate the awk include regex pattern string for the specified patterns
