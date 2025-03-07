@@ -34,3 +34,4 @@ words:
 - Unvalidated
 - monomorphization
 ignorePaths:
+- config.yml
