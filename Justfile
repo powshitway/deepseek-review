@@ -21,6 +21,7 @@ set dotenv-load := true
 set positional-arguments := true
 
 # Just commands aliases
+alias t  := test
 alias cr := code-review
 
 # Use `just --evaluate` to show env vars
@@ -47,6 +48,10 @@ release *OPTIONS:
 code-review *OPTIONS:
   @overlay use {{ join(DEEPSEEK_REVIEW_PATH, 'nu', 'review.nu') }}; \
     deepseek-review {{OPTIONS}}
+
+# Run the test cases locally by nutest
+test:
+  @use $'($nu.default-config-dir)/lib/nutest' *; run-tests
 
 # Plugins need to be registered only once after nu v0.61
 _setup:
