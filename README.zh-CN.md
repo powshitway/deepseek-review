@@ -197,33 +197,63 @@ Parameters:
 
 ### 环境配置
 
-在本地进行代码审查需要先修改配置文件，仓库里已经有了 [`config.example.yml`](https://github.com/hustcer/deepseek-review/blob/main/config.example.yml) 配置文件示例，将其拷贝到 `config.yml` 然后根据自己的实际情况进行修改即可。
+在本地进行代码审查需要先修改配置文件，仓库里已经有了 [`config.example.yml`](https://github.com/hustcer/deepseek-review/blob/main/config.example.yml) 配置文件示例，将其拷贝到 `config.yml` 然后根据自己的实际情况进行修改即可，在修改配置文件的过程中请仔细阅读其中的注释，注释会说明每个配置项的作用。
 
 > [!WARNING]
 >
 > `config.yml` 配置文件仅在本地使用，在 GitHub Workflow 里面不会使用，里面的敏感信息请
 > 妥善保存，不要提交到代码仓库里面
+>
 
-### 使用举例
+**创建命令别名**
+
+为了方便您可以在任意本地仓库进行代码审查需要创建一个别名，比如：
+
+```sh
+# Nushell: 修改其 config.nu 配置文件，添加：
+alias cr = nu /absolute/path/to/deepseek-review/cr --config /absolute/path/to/deepseek-review/config.yml
+# 对于 zsh 或 bash分别修改 ~/.zshrc or ~/.bashrc and add:
+alias cr="nu /absolute/path/to/deepseek-review/cr --config /absolute/path/to/deepseek-review/config.yml"
+ # After sourcing the profile you have edit, you can use `cr` now
+```
+
+之后就可以通过 `cr` 命令来进行代码审查了。
+
+### 审查本地仓库
+
+对本地仓库进行代码审查时需要先切换到 Git 仓库所在目录，然后通过 `cr` 命令即可对当前目录的当前修改进行代码审查，前提是您已经对 `config.yml` 进行了正确的配置。
+
+**使用举例**
 
 ```sh
 # 对本地当前目录所在仓库 `git diff` 修改内容进行代码审查
-nu cr
+cr
 # 对本地当前目录所在仓库 `git diff f536acc` 修改内容进行代码审查
-nu cr --diff-from f536acc
+cr --diff-from f536acc
 # 对本地当前目录所在仓库 `git diff f536acc 0dd0eb5` 修改内容进行代码审查
-nu cr --diff-from f536acc --diff-to 0dd0eb5
+cr --diff-from f536acc --diff-to 0dd0eb5
 # 通过 --patch-cmd 参数对本地当前目录所在仓库变更内容进行审查
-nu cr --patch-cmd 'git diff head~3'
-nu cr -c 'git show head~3'
-nu cr -c 'git diff 2393375 71f5a31'
-nu cr -c 'git diff 2393375 71f5a31 nu/*'
-nu cr -c 'git diff 2393375 71f5a31 :!nu/*'
-# 像 `nu cr -c 'git show head~3; rm ./*'` 这样危险的命令将会被禁止
+cr --patch-cmd 'git diff head~3'
+cr -c 'git show head~3'
+cr -c 'git diff 2393375 71f5a31'
+cr -c 'git diff 2393375 71f5a31 nu/*'
+cr -c 'git diff 2393375 71f5a31 :!nu/*'
+# 像 `cr -c 'git show head~3; rm ./*'` 这样危险的命令将会被禁止
+```
+
+### 本地审查远程 GitHub PR
+
+在本地对远程 GitHub 仓库的 PR 进行审查的时候一定要通过 `--pr-number` 传入待审查的 PR 编号，以及 `--repo` 指明待审查的仓库，比如 `hustcer/deepseek-review`, 如果没有指定 `--repo` 参数则从 config.yml 里面的 `settings.default-github-repo` 配置项读取待审查的仓库。
+
+**使用举例**
+
+```sh
 # 对远程 DEFAULT_GITHUB_REPO 仓库编号为 31 的 PR 进行代码审查
-nu cr --pr-number 31
+cr --pr-number 31
 # 对远程 hustcer/deepseek-review 仓库编号为 31 的 PR 进行代码审查
-nu cr --pr-number 31 --repo hustcer/deepseek-review
+cr --pr-number 31 --repo hustcer/deepseek-review
+# 对 PR 进行审查的时候排除 pnpm-lock.yaml 文件的变更
+cr --pr-number 31 --exclude pnpm-lock.yaml
 ```
 
 ## 许可
