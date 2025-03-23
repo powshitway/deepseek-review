@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.15.0] - 2025-03-23
+
+### Features
+
+- Add example code review prompts for frontend, java and rust to `config.example.yml` (#138)
+- Post a comment to the PR to notify the user when no `CHAT_TOKEN` is provided (#143)
+- Add nushell version check and notify for update (#144)
+- Add `--config` option to specify config file path for local code review (#146)
+- Support local DeepSeek model running on Ollama (#152)
+- Add repo of current directory code review support (#161)
+
+### Miscellaneous Tasks
+
+- Publish test summary (#133)
+- Update tests status badge to README
+- Update code review prompt for current nushell repo (#139)
+- Use SiliconFlow's DeepSeek API
+- Some code refactor (#149)
+- Add `just test` task to run tests locally
+
+### Refactor
+
+- Simplify `is-safe-git` common util (#150)
+- Enhance the glob pattern handling in `glob-to-regex` function (#151)
+
+### Deps
+
+- Upgrade `Nushell` to `v0.103.0`
+
 ## [1.12.0] - 2025-02-16
 
 ### Bug Fixes
