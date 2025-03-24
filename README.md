@@ -215,7 +215,7 @@ For convenience in performing code review across any local repository, create a 
 # For Nushell: Modify config.nu and add:
 alias cr = nu /absolute/path/to/deepseek-review/cr --config /absolute/path/to/deepseek-review/config.yml
 
-# For zsh/bash: Modify ~/.zshrc or ~/.bashrc and add:
+# Modify ~/.zshrc for zsh or ~/.bashrc for bash or ~/.config/fish/config.fish for fish and add:
 alias cr="nu /absolute/path/to/deepseek-review/cr --config /absolute/path/to/deepseek-review/config.yml"
 
 # After sourcing the modified profile, use `cr` for code review

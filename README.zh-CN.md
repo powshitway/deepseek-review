@@ -212,7 +212,8 @@ Parameters:
 ```sh
 # Nushell: 修改其 config.nu 配置文件，添加：
 alias cr = nu /absolute/path/to/deepseek-review/cr --config /absolute/path/to/deepseek-review/config.yml
-# 对于 zsh 或 bash分别修改 ~/.zshrc or ~/.bashrc and add:
+
+# Modify ~/.zshrc for zsh or ~/.bashrc for bash or ~/.config/fish/config.fish for fish and add:
 alias cr="nu /absolute/path/to/deepseek-review/cr --config /absolute/path/to/deepseek-review/config.yml"
  # After sourcing the profile you have edit, you can use `cr` now
 ```
