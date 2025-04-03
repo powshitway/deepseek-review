@@ -45,6 +45,7 @@ providers:
         alias: r1
         enabled: true
         description: 'DeepSeek R1 model running on Ollama'
+
   - name: 'DeepSeek'
     token: 'YOUR_DEEPSEEK_TOKEN'    # Required, The API token for the provider
     base-url: 'https://api.deepseek.com'
@@ -69,6 +70,18 @@ providers:
       - name: 'deepseek-ai/DeepSeek-R1'
         alias: r1
         description: 'SiliconFlow DeepSeek R1 model'
+
+  - name: OpenRouter
+    token: sk-or-v1-*****
+    base-url: https://openrouter.ai/api/v1
+    models:
+      - name: deepseek/deepseek-chat-v3-0324:free
+        alias: v3
+        enabled: true
+        description: 'OpenRouter DeepSeek V3 model'
+      - name: deepseek/deepseek-r1:free
+        alias: r1
+        description: 'OpenRouter DeepSeek R1 model'
 
 # Multiple Prompts could be defined, select the one by name in 'settings.user-prompt' or 'settings.system-prompt'
 prompts:
