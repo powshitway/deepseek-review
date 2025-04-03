@@ -32,7 +32,11 @@ use common.nu [
   compare-ver, compact-record, git-check, has-ref, GITHUB_API_BASE
 ]
 
-const RESPONSE_END = 'data: [DONE]'
+const IGNORED_MESSAGES = {
+  '-alive': true,                   # The server is alive
+  'data: [DONE]': true,             # The end of the response
+  ': OPENROUTER PROCESSING': true,  # OPENROUTER in PROCESSING message
+}
 
 # It takes longer to respond to requests made with unknown/rare user agents.
 # When make http post pretend to be curl, it gets a response just as quickly as curl.
@@ -142,8 +146,9 @@ export def --env deepseek-review [
     print $'✖️ Code review failed！Error: '; hr-line; print $response
     exit $ECODE.SERVER_ERROR
   }
-  let reason = $response | get -i choices.0.message.reasoning_content
-  let review = $response | get -i choices.0.message.content | default ($response | get -i message.content)
+  let message = $response | get -i choices.0.message
+  let reason = $message | coalesce-reasoning
+  let review = $message.content? | default ($response | get -i message.content)
   let result = ['<details>' '<summary> Reasoning Details</summary>' $reason "</details>\n" $review] | str join "\n"
   if ($review | is-empty) {
     print $'✖️ Code review failed！No review result returned from ($base_url) ...'
@@ -221,19 +226,17 @@ def streaming-output [
       }
     | try { lines } catch { print $'(ansi r)Error Happened ...(ansi reset)'; exit $ECODE.SERVER_ERROR }
     | each {|line|
-        if $line == $RESPONSE_END { return }
         if ($line | is-empty) { return }
-        # DeepSeek Response vs Local Ollama Response
-        let $last = if $line =~ '^data: ' { $line | str substring 6.. | from json } else { $line | from json }
-        if $last == '-alive' { print $last; return }
+        if ($IGNORED_MESSAGES | get -i $line | default false) { return }
+        let $last = $line | parse-line
         if $debug { $last | to json | kv set last-reply }
         $last | get -i choices.0.delta | default ($last | get -i message) | if ($in | is-not-empty) {
           let delta = $in
-          if ($delta.reasoning_content? | is-not-empty) { kv set reasoning ((kv get reasoning) + 1) }
+          if ($delta | coalesce-reasoning | is-not-empty) { kv set reasoning ((kv get reasoning) + 1) }
           if (kv get reasoning) == 1 { print $'(char nl)Reasoning Details:'; hr-line }
           if ($delta.content | is-not-empty) { kv set content ((kv get content) + 1) }
           if (kv get content) == 1 { print $'(char nl)Review Details:'; hr-line }
-          print -n ($delta.reasoning_content? | default $delta.content)
+          print -n ($delta | coalesce-reasoning | default $delta.content)
         }
       }
 
@@ -241,6 +244,28 @@ def streaming-output [
     print $'(char nl)(char nl)Model & Token Usage:'; hr-line
     kv get last-reply | from json | select -i model usage | table -e | print
   }
+}
+
+# Parse the line from the streaming response
+def parse-line [] {
+  let $line = $in
+  # DeepSeek Response vs Local Ollama Response
+  try {
+    if $line =~ '^data: ' {
+      $line | str substring 6.. | from json
+    } else {
+      $line | from json
+    }
+  } catch {
+    print -e $'(ansi r)Unrecognized content:(ansi reset) ($line)'
+    exit $ECODE.SERVER_ERROR
+  }
+}
+
+# Coalesce the reasoning content
+def coalesce-reasoning [] {
+  let msg = $in
+  $msg.reasoning_content? | default $msg.reasoning?
 }
 
 alias main = deepseek-review
