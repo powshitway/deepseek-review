@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.16.0] - 2025-04-05
+
+### Documentation
+
+- Add alias setup guide for `powershell` (#163)
+
+### Features
+
+- Add OpenRouter deepseek model support (#167)
+
+### Miscellaneous Tasks
+
+- Add alias guide for `fish`
+- Add openrouter.ai config example
+- Set minimum required nushell version to v0.103
+
+### Refactor
+
+- Refactor `get-diff` custom command (#164)
+- Refactor diff handling by moving logic to separate module (#165)
+- Replace custom `kv.nu` module with `std-rfc/kv` for key-value functionality (#166)
+
 ## [1.15.0] - 2025-03-23
 
 ### Features
