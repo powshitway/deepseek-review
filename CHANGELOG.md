@@ -13,9 +13,9 @@ All notable changes to this project will be documented in this file.
 
 ### Miscellaneous Tasks
 
-- Add alias guide for `fish`
+- Add alias setup guide for `fish`
 - Add openrouter.ai config example
-- Set minimum required nushell version to v0.103
+- Set minimum required `nushell` version to v0.103
 
 ### Refactor
 
