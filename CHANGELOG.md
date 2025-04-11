@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.17.0] - 2025-04-11
+
+### Bug Fixes
+
+- Read default `include` and `exclude` patterns from config for local code review (#170)
+
+### Features
+
+All the following changes are for local code review only:
+
+- Add code review for `git show head:path/to/file` patch command support (#171)
+- Add write code review result to file by `--output` flag support (#172)
+
 ## [1.16.0] - 2025-04-05
 
 ### Documentation
