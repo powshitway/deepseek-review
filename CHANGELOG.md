@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.18.0] - 2025-06-11
+
+### Features
+
+- Set default `temperature` to **0.3** for code review (#181)
+
+### Miscellaneous Tasks
+
+- Refine diff flag descriptions in docs and scripts (#177)
+- Upgrade `Nu` to 0.105 and pin [`hustcer/setup-nu`](https://github.com/hustcer/setup-nu) to v3.19 (#183)
+
+### Deps
+
+- Upgrade `nutest` to v1.1.0 (#179)
+
 ## [1.17.0] - 2025-04-11
 
 ### Bug Fixes
